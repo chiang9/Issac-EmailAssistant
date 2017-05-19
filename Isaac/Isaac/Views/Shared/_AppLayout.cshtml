@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+<html ng-app="IsaacApp">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issac</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @*<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>*@
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/angular-sanitize.min.js"></script>
+    <script src="~/Scripts/angular-sanitize.js"></script>
+    <script src="~/Scripts/angular.js"></script>
+    @Scripts.Render("~/bundles/modernizr")
+    
+    <style>
+        body {
+            background-image: url('../../Content/Images/paper-background.jpg');
+           
+            background-repeat: repeat;
+        }
+    </style>
+    <link href="~/Scripts/w2ui/w2ui-1.4.3.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

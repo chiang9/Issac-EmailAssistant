@@ -1,0 +1,487 @@
+﻿
+@{
+    ViewBag.Title = "Compose";
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+}
+
+<h2>Compose</h2>
+<link href="~/Content/Compose.css" rel="stylesheet" />
+
+<body>
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+    <script>
+        tinymce.init({ selector: '#compose-messageEditor' });
+
+    </script>
+
+    <div class="container">
+        <button id="authorize-button" class="btn btn-primary hidden">Login</button>
+
+        <div id="compose-md">
+            <div id="compose-modal" tabindex="-1">
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="email" class="form-control" id="compose-to" placeholder="To" required />
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="compose-subject" placeholder="Subject" required />
+                    </div>
+                </div>
+                <div>
+                    <textarea id="compose-messageEditor" rows="10" required></textarea>
+                </div>
+                <br />
+
+                <div>
+                    Add Attachments
+                    <input type="file" id="files" name="files[]" multiple />
+                    <output id="list"></output>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="ptemplate" class="btn btn-default">Personal Template</button>
+                    <button type="button" id="template" class="btn btn-default">Template</button>
+                    <button type="button" id="signature" class="btn btn-default">Add Signature</button>
+                    <button type="button" id="close-button" class="btn btn-default">close</button>
+                    <button type="submit" onclick="sendEmail()" id="send-button" class= "btn-primary">Send</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+
+      
+
+        var To = sessionStorage.getItem("To");
+        var Subject = sessionStorage.getItem("Subject");
+        var Content = sessionStorage.getItem("Content");
+
+        var emailId = null;
+        var attachmentArr = [];
+        var encodedAttach = [];
+        var attachCount = 0;
+        var attachSize = 0;
+        var fileuploading = false;
+
+
+        var clientId = '149346526257-mm1str5bj0hemtu6f44itcheia8bdp1n.apps.googleusercontent.com';
+        var apiKey = 'AIzaSyAMvrO8gDr1cMOYhXmsvtwEP4K1ICRzAhU';
+        var scopes =
+          'https://www.googleapis.com/auth/gmail.readonly ' +
+          'https://www.googleapis.com/auth/gmail.send ' +
+          'https://www.googleapis.com/auth/gmail.compose ' +
+          'https://www.googleapis.com/auth/gmail.modify';
+
+        // Check for the various File API support.
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            // Great success! All the File APIs are supported.
+        } else {
+            alert('The File APIs are not fully supported in this browser.');
+        }
+
+
+        function handleClientLoad() {
+            gapi.client.setApiKey(apiKey);
+            window.setTimeout(checkAuth, 1);
+        }
+
+        function checkAuth() {
+            gapi.auth.authorize({
+                client_id: clientId,
+                scope: scopes,
+                immediate: true
+            }, handleAuthResult);
+        }
+
+        function handleAuthClick() {
+            gapi.auth.authorize({
+                client_id: clientId,
+                scope: scopes,
+                immediate: false
+            }, handleAuthResult);
+            return false;
+        }
+
+        function handleAuthResult(authResult) {
+            if (authResult && !authResult.error) {
+                loadGmailApi();
+                $('#authorize-button').remove();
+                document.getElementById('compose-md').style.display = 'inline';
+            } else {
+                $('#authorize-button').removeClass("hidden");
+                $('#authorize-button').on('click', function () {
+                    handleAuthClick();
+                });
+                document.getElementById('compose-md').style.display = 'none';
+            }
+        }
+
+
+        function loadGmailApi() {
+            fillInCompose(To, Subject, Content);
+            gapi.client.load('gmail', 'v1', loadApi);
+        }
+
+        function loadApi() {
+            
+            var trequest = gapi.client.gmail.users.getProfile({ 'userId': 'me' });
+            trequest.execute(function (res) {
+                emailId = res.emailAddress;
+                var i = 0;
+                for (i; i < emailId.length; i++) {
+                    if (emailId.substring(i, i + 5) == "gmail") {
+                        emailId = emailId.substring(0, i - 1);
+                    }
+                }
+                while (emailId.includes(".")) {
+                    emailId = emailId.replace(".", "{dot}");
+                }
+            });
+
+           
+        }
+
+
+
+        function sendEmail() {
+            $('#send-button').addClass('disabled');
+
+            sendMessage(
+              {
+                  'To': $('#compose-to').val(),
+                  'Subject': $('#compose-subject').val()
+              },
+              tinyMCE.activeEditor.getContent({ format: 'text' }),
+              tinyMCE.activeEditor.getContent({ format: 'html' }),
+              composeTidy
+            );
+
+            return false;
+        }
+
+        function composeTidy() {
+            $('#compose-modal').modal('hide');
+
+            $('#compose-to').val('');
+            $('#compose-subject').val('');
+            tinyMCE.activeEditor.setContent('');
+
+            $('#send-button').removeClass('disabled');
+            attachmentArr = [];
+            encodedAttach = [];
+            document.getElementById('list').innerHTML = "";
+
+            sessionStorage.clear();
+            window.close();
+        }
+
+
+
+        function sendMessage(headers_obj, message, messageHTML, callback) {
+            if (fileuploading) {
+                alert("attachment is uploading, please try again");
+                return;
+            }
+
+            gapi.client.load('gmail', 'v1', function () {
+
+                var mail =
+                'Content-Type: multipart/mixed; boundary="foo_bar_baz"\n' +
+                'MIME-Version: 1.0\n' +
+                'to: ' + headers_obj['To'] + '\n' +
+                'subject: ' + headers_obj['Subject'] + '\n\n' +
+
+                '--foo_bar_baz\n' +
+                'Content-Type: multipart/alternative; boundary="html_boundry"\n\n' +
+                '--html_boundry\n' +
+                'Content-Type: text/plain; charset="UTF-8"\n' +
+                'MIME-Version: 1.0\n' +
+                'Content-Transfer-Encoding: 7bit\n\n' +
+                 '\n\n' +                                                             // text area
+                 '--html_boundry\n' +
+                 'Content-Type: text/html; charset=UTF-8\n\n' +
+                 messageHTML + '\n\n' +
+                 '--html_boundry--\n' +
+                 '--foo_bar_baz\n';
+
+
+                for (var i = 0; i < attachmentArr.length; i++) {
+                    mail += '--foo_bar_baz\n' +
+            'Content-Type: ' + attachmentArr[i].type + '; name="' + attachmentArr[i].name + '\n' +
+            'MIME-Version: 1.0\n' +
+
+            'Content-Type: ' + attachmentArr[i].type + '\n' +
+            'Content-Transfer-Encoding: base64\n' +
+            'Content-Disposition: attachment; filename="' + attachmentArr[i].name + '"\n\n' +
+
+            encodedAttach[i] + '\n\n';
+
+                    if (i >= attachmentArr.length - 1) {
+                        mail += '--foo_bar_baz--\n\n';
+                    } else {
+                        mail += '--foo_bar_baz\n';
+                    }
+                }
+                if (attachmentArr.length == 0) {
+                    mail += '--foo_bar_baz--\n\n';
+                }
+
+                var encode64Mail = window.btoa(mail).replace(/\+/g, '-').replace(/\//g, '_');
+
+                var sendRequest = gapi.client.gmail.users.messages.send({
+                    'userId': 'me',
+                    'resource': {
+                        'raw': encode64Mail
+
+                    }
+                });
+
+                return sendRequest.execute(callback);
+            });
+        }
+
+
+        function fillInCompose(to, subject, message) {
+            $('#compose-to').val(to);
+            $('#compose-subject').val(subject);
+            tinyMCE.activeEditor.setContent(message, { format: 'raw' });
+        }
+
+
+        function getHeader(headers, index) {
+            var header = '';
+            $.each(headers, function () {
+                if (this.name.toLowerCase() === index.toLowerCase()) {
+                    header = this.value;
+                }
+            });
+            return header;
+        }
+
+        function getBody(message) {
+            var encodedBody = '';
+            if (typeof message.parts === 'undefined') {
+                encodedBody = message.body.data;
+            }
+            else {
+                encodedBody = getHTMLPart(message.parts);
+            }
+            encodedBody = encodedBody.replace(/-/g, '+').replace(/_/g, '/').replace(/\s/g, '');
+            return decodeURIComponent(escape(window.atob(encodedBody)));
+        }
+
+        function getHTMLPart(arr) {
+            for (var x = 0; x <= arr.length; x++) {
+                if (typeof arr[x].parts === 'undefined') {
+                    if (arr[x].mimeType === 'text/html') {
+                        return arr[x].body.data;
+                    }
+                }
+                else {
+                    return getHTMLPart(arr[x].parts);
+                }
+            }
+            return '';
+        }
+
+
+        function DeleteFile(id) {
+            var item = document.getElementById("ul" + id);
+            attachmentArr.splice(id, 1);
+            encodedAttach.splice(id, 1);
+
+            item.remove();
+
+        }
+
+        // add attachments
+        var handleFileSelect = function (evt) {
+            var files = evt.target.files;
+            var file = files[0];
+
+            if (fileuploading) {
+                alert("attachment is uploading, please try again");
+                return;
+            }
+
+            fileuploading = true;
+
+            for (var i=0; i< attachmentArr; i++) {
+                attachSize += attachmentArr[i].size;
+            }
+
+            if ((attachSize + file.size) > 25000000) {
+                alert("you can't upload files over 25MB");
+                return;
+            } 
+
+            var fileTitle = '<li ><strong>' + escape(file.name) + '</strong> (' + file.type + ') - ' +
+                            file.size + ' bytes ' + '<a href = "#" onclick="DeleteFile(' + attachCount + ')" id="attachD' + attachCount + '">Delete</a>' +
+                            '</li>';
+
+            document.getElementById('list').innerHTML += '<ul id="ul' + attachCount + '">' + fileTitle + '</ul>';
+
+            attachmentArr.push(file);
+
+            if (files && file) {
+                var reader = new FileReader();
+
+                reader.onload = function (readerEvt) {
+                    var binaryString = readerEvt.target.result;
+                    encodedAttach.push(btoa(binaryString));
+                    attachCount += 1;
+                    fileuploading = false;
+                };
+
+                reader.readAsBinaryString(file);
+            }
+
+        };
+
+        function signatureGenerate1() {
+            alert(tinyMCE.activeEditor.getContent({ format: 'html' }));
+        }
+
+        function signatureGenerate() {
+            gapi.client.load('gmail', 'v1', function () {
+                var trequest = gapi.client.gmail.users.getProfile({ 'userId': 'me' });
+                
+                trequest.execute(function (res) {
+                  
+                    emailId = res.emailAddress;
+                    var info;
+                    var i = 0;
+                    for (i; i < emailId.length; i++) {
+                        if (emailId.substring(i, i+5) == "gmail") {
+                            info = emailId.substring(0, i-1);
+                        }
+                    }
+                    while (info.includes(".")) {
+                        info = info.replace(".", "{dot}");
+                    }
+
+                    var url = "../AppConnection/SignitureInfo/"+info;
+
+     
+                    $.ajax({
+                        url : url,
+                        type : "get",
+                        async: false,
+                        success : function(data) {
+                            var Name = data[1];
+                            var Company = data[3];
+                            var Country = data[0];
+                            var JobTitle = data[4];
+                            var Fax = data [5];
+                            var Tel = data[2];
+                            var signature = '</br></br><font size="1" color="#666666">===</font>';
+
+
+                            if (!Name) {
+                                 alert("not enough information in user setting");
+                                 return;
+                            } else {
+                                signature += '<div dir="ltr"><b><font face="times new roman, serif">' + Name + '</font></b>';
+                                if (JobTitle) {
+                                    signature += '<div><font size="1" face="times new roman, serif" color="#0000ff">' + JobTitle;
+                                    if (!Company) {
+                                        signature += '</font></div>';
+                                    } else {
+                                        signature += ',' + Company + '</font></div>';
+                                    }
+                                } else {
+                                    if (Company) {
+                                        signature += '<div><font size="1" face="times new roman, serif" color="#666666">' + Company + '</font></div>';
+                                    }
+                                }
+
+                                if (Tel) {
+                                    signature += '</br><div><font size="1" face="times new roman, serif" color="#666666">Tel: ' + Tel + '</font></div></div>';
+                                }
+
+                                if (Fax) {
+                                    signature += '<div><font size="1" face="times new roman, serif" color="#666666">Fax: ' + Fax + '</font></div></div>';
+                                }
+                                signature += '<div><font size="1" face="times new roman, serif" color="#666666">Email: ' + res.emailAddress + '</font></div></div>';
+                                signature += '</div>';
+                            }
+                            
+
+                            var message = tinyMCE.activeEditor.getContent({ format: 'html' });
+                            message += signature;
+                            tinyMCE.activeEditor.setContent(message, { format: 'raw' });
+                          
+                        },
+                        error: function() {
+                            
+                        }
+                    });
+                    
+                });
+            });                
+            
+
+           
+        }
+
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+        document.getElementById('signature').addEventListener('click', signatureGenerate);
+
+        document.getElementById("template").addEventListener('click', function () {
+            gapi.client.load('gmail', 'v1', function () {
+                var trequest = gapi.client.gmail.users.getProfile({ 'userId': 'me' });
+                trequest.execute(function (res) {
+                    emailId = res.emailAddress;
+                    var i = 0;
+                    for (i; i < emailId.length; i++) {
+                        if (emailId.substring(i, i + 5) == "gmail") {
+                            emailId = emailId.substring(0, i - 1);
+                        }
+                    }
+                    while (emailId.includes(".")) {
+                        emailId = emailId.replace(".", "{dot}");
+                    }
+                    location.replace("../AppConnection/CategoryBrowsing/" + emailId);
+                });
+            });                
+            
+        });
+
+        document.getElementById("ptemplate").addEventListener('click', function () {
+            gapi.client.load('gmail', 'v1', function () {
+                var trequest = gapi.client.gmail.users.getProfile({ 'userId': 'me' });
+                trequest.execute(function (res) {
+                    emailId = res.emailAddress;
+                    var i = 0;
+                    for (i; i < emailId.length; i++) {
+                        if (emailId.substring(i, i + 5) == "gmail") {
+                            emailId = emailId.substring(0, i - 1);
+                        }
+                    }
+                    while (emailId.includes(".")) {
+                        emailId = emailId.replace(".", "{dot}");
+                    }
+                    location.replace("../AppConnection/PersonalTemplateBrowsing/" + emailId);
+                });
+            });                
+            
+        });
+
+
+        document.getElementById("close-button").addEventListener('click', function () {
+            window.close();
+        });
+
+      
+
+
+    </script>
+    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+</body>

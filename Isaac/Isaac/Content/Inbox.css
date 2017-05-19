@@ -1,0 +1,47 @@
+﻿body {
+    background-image: url('Images/img_flwr.gif'), url('../../Content/Images/paper-background.jpg');
+    background-position: right bottom;
+    background-repeat: no-repeat, repeat;
+
+}
+
+.paging-nav {
+  text-align: right;
+  padding-top: 2px;
+}
+ 
+.paging-nav a {
+  margin: auto 1px;
+  text-decoration: none;
+  display: inline-block;
+  padding: 1px 7px;
+  background: #91b9e6;
+  color: white;
+  border-radius: 3px;
+}
+ 
+.paging-nav .selected-page {
+  background: #187ed5;
+  font-weight: bold;
+}
+
+#paging {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 5px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+
+}
+
+#paging:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+

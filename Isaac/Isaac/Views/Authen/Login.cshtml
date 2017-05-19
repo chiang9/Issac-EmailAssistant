@@ -1,0 +1,49 @@
+﻿@model  Isaac.Models.AspNetUser
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+}
+
+
+<h2>Login</h2>
+@using (Html.BeginForm())
+{
+    <div>
+        <fieldset>
+            <legend>Login Form</legend>
+            <div>
+               <label>Account</label>
+            </div>
+            <div>
+                @Html.TextBoxFor(u => u.UserName,new { @Value = ViewBag.email})
+            </div>
+            <div>
+                <label>Password</label>
+            </div>
+            <div>
+                @Html.PasswordFor(u => u.PasswordHash)
+            </div>
+            
+            <input type="submit" value="LogIn" style="margin-top:30px" />
+
+        </fieldset>
+    </div>
+    <br />
+
+}
+<button id="register-btn">Register</button> <br> <br />
+<button>@Html.ActionLink("Forget Password", "Forgetpassword", "Authen",new { @style="color:black; margin-top: 30px"})</button>
+
+<script>
+    var info =  @Html.Raw(Json.Encode(ViewBag.RegisterInfo));
+    document.getElementById('register-btn').addEventListener('click',function() {
+        if (info == ""){
+            location.replace('../Authen/Register/'+info);
+        }
+        else{
+            location.replace('../Register/'+info);
+        }
+       
+    });
+
+</script>

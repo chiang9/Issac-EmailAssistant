@@ -1,0 +1,171 @@
+﻿@model Isaac.Models.PersonalTemplate
+
+
+@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+}
+
+<link href="~/Content/Custdialog.css" rel="stylesheet" />
+
+<div id="header">
+    Finish  your  Template
+</div>
+
+<div ng-controller="CompressController2">
+    <form ng-submit="submitTable()">
+        <table class="table">
+            <tr>
+                <th>
+                    Question
+                </th>
+                <th>
+                    Answer
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <label>To</label>
+                </td>
+                <td>
+                    <input type="text" ng-model="basicInfo[0].To" />
+                </td>
+            </tr>
+            <tr ng-repeat="subj in subjectQuestion">
+                <td>
+                    <label>{{subj.SubjectQuestion}}</label>
+                </td>
+                <td>
+                    <input type="text" ng-model="subj.answer" />
+                </td>
+            </tr>
+            <tr ng-repeat="question in questions">
+                <td>
+                    <label>{{question.content}}</label>
+                </td>
+                <td>
+                    <input type="text" ng-model="question.answer" />
+                </td>
+            </tr>
+        </table>
+        <div>
+            <label style="float:left">Subject: </label>
+            <div ng-repeat="body in subjectString track by $index" style="float:left">
+                <label>{{body.SubjectString}}{{subjectQuestion[$index].answer}}</label>
+            </div>
+        </div>
+        <br />
+        <br />
+        <div>
+            <span ng-repeat="body in bodyContent track by $index">
+                <span ng-bind-html="body.emailContent"></span>
+                <span ng-bind-html="questions[$index].answer"></span>
+            </span>
+        </div>
+
+        <button id="cust-button" type="submit" data-ng-disabled="mainForm.$invalid">Apply Template</button>
+    </form>
+
+</div>
+
+<div style="float:right">
+    <br />
+    <button id="back-btn" class="btn btn-default">Back</button>
+
+</div>
+
+
+
+
+
+<script type="text/javascript">
+    var app = angular.module('IsaacApp', ['ngSanitize']);
+
+    app.controller('CompressController2', function ($scope, $http) {
+
+        //convert all the viewbag data into array
+        var question =  @Html.Raw(Json.Encode(ViewBag.QuestionContent));
+        var body =  @Html.Raw(Json.Encode(ViewBag.Content));
+        var SubjectQuestion =  @Html.Raw(Json.Encode(ViewBag.SubjectQuestion));
+        var SubejctString =  @Html.Raw(Json.Encode(ViewBag.Subject));
+
+       
+
+        //convert array into $scope varable
+        $scope.basicInfo = [{To:"",Subject:""}];
+        $scope.bodyContent = [];
+        $scope.questions = [];
+        $scope.subjectQuestion = [];
+        $scope.subjectString = [];
+
+        for(var i =0 ;i < body.length; i ++){
+            while (body[i].indexOf("\n") != -1 || body[i].indexOf("\\n") != -1) {
+                body[i] = body[i].replace("\n", "<br/>");
+                body[i] = body[i].replace("\\n", "<br/>");
+            }
+        }     
+
+        for (var i = 0; i< question.length; i++){
+            $scope.questions.push({content: question[i], answer: ""});
+        }
+        for (var i =0; i< body.length; i++){
+            $scope.bodyContent.push({emailContent:body[i]});
+        }
+
+        for (var i = 0; i< SubjectQuestion.length; i++){
+            $scope.subjectQuestion.push({SubjectQuestion: SubjectQuestion[i], answer:""});
+        }
+
+        for (var i = 0; i< SubejctString.length; i++){
+            $scope.subjectString.push({SubjectString: SubejctString[i]});
+        }
+
+        //function
+        $scope.submitTable = function() {
+
+            //model will be sent to google extension
+            var model = '';
+            for (var i = 0; i < $scope.bodyContent.length; i++){
+                model += $scope.bodyContent[i].emailContent + " ";
+                if (i < $scope.questions.length){
+                    model += $scope.questions[i].answer+ " ";
+                }
+            }
+
+            var To = '';
+            var Subject = '';
+
+            for (var i = 0 ; i< $scope.subjectString.length; i++){
+                Subject += $scope.subjectString[i].SubjectString;
+                if (i<$scope.subjectQuestion.length )
+                    Subject += $scope.subjectQuestion[i].answer;
+            }
+
+            To += $scope.basicInfo[0].To;
+
+
+
+            //Sent back to Controller
+
+            $http.post('/AppConnection/CompressData', {model: model})
+            .success(function(data, status, headers, config){
+                sessionStorage.setItem("Content",model);
+                sessionStorage.setItem ("To",To);
+                sessionStorage.setItem("Subject",Subject);
+                window.location.replace('../compose');
+
+            })
+            .error(function(data, status, headers, config){
+      
+            });
+
+        }
+
+
+    });
+
+    document.getElementById('back-btn').addEventListener('click', function() {
+        window.history.back();
+        
+    });
+
+</script>

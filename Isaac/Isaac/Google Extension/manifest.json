@@ -1,0 +1,22 @@
+{
+  "name": "Isaac Beta",
+  "version": "2.1.2",
+  "manifest_version": 2,
+  "minimum_chrome_version": "29",
+  "description": "",
+  "background": {
+    "scripts": ["background.js"]
+  },
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_title": "Extension description",
+    "default_popup": "extension.html"
+  },
+  "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",
+  "icons": {
+    "128": "icon.png"
+  },
+  "permissions": [ "tabs","identity", "https://www.googleapis.com/*"]
+  
+}

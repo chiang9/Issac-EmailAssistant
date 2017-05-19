@@ -1,0 +1,21 @@
+﻿body {
+}
+
+#header {
+    background-color:#382817;
+    color:white;
+    text-align:center;
+    padding:5px;
+    font-size:x-large;
+    font-family: 'Cambria';
+}
+
+#table-header {
+    font-weight:bold;
+}
+
+.form-group {
+    padding-top: 10px;
+    padding-right: 20px;
+}
+

@@ -1,0 +1,9 @@
+﻿body {
+}
+
+#CategoryPic {
+    max-height: 200px;
+    max-width: 200px;
+    margin: auto;
+    margin-bottom:10px;
+}

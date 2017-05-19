@@ -1,0 +1,106 @@
+#header {
+    color:white;
+    text-align:center;
+    font-size:medium;
+    padding: 5px;
+}
+
+#footer {
+    color:white;
+    clear:both;
+    text-align:center;
+    padding:5px;	 	 
+}
+
+#colorpicker {
+    width:20px;
+    height: 10px;
+    float: right;
+    border-radius: 18px 18px 18px 18px;
+-moz-border-radius: 18px 18px 18px 18px;
+-webkit-border-radius: 18px 18px 18px 18px;
+border: 0px double #000000;
+}
+
+
+body {
+    background-image: url('deepblue.png');
+    margin: 0px 0px 0px 0px;
+    padding: 10px 5px 5px 5px;
+    font-family: Arial, Helvetica, Sans-serif;
+    font-size: 13px;
+    font-family: Arial;
+    background-color: #16151b;
+    border: #70512f;
+    border-width: thin;
+}
+
+img {
+    border-radius: 50%;
+}
+
+.cust-button {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: #3c3949;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: medium;
+  padding: 10px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  width: 150px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.cust-button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.cust-button span:after {
+  content: '>>';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -40px;
+  transition: 0.5s;
+}
+
+.cust-button:hover span {
+  padding-right: 40px;
+}
+
+.cust-button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+
+.compose-button {
+    background-color: #4CAF50; 
+    color: white; 
+    border: 2px solid #4CAF50;
+}
+
+.compose-button:hover {
+    background-color: white;
+    color: black;
+}
+
+.inbox-button {
+    background-color: #008CBA; 
+    color: white; 
+    border: 2px solid #008CBA;
+}
+
+.inbox-button:hover {
+    background-color: white;
+    color: black;
+}
+

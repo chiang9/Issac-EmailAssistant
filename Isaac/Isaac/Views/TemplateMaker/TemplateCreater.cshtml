@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Isaac.Models.Template>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+}
+
+<h2>Template</h2>
+
+<p>
+    @Html.ActionLink("Create New", "TemplateCreate", new { id = ViewBag.CategoryId})
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TemplateTitle)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CreateDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TemplateSubject)
+        </th>
+
+        <th>
+            @Html.DisplayNameFor(model => model.Author.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Category.CategoryName)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TemplateTitle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreateDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TemplateSubject)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Author.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Category.CategoryName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "TemplateEdit", new { id = item.TemplateID }) |
+                @Html.ActionLink("Delete", "TemplateDelete", new { id = item.TemplateID }) |
+                @Html.ActionLink("Template Question","TemplateQuestionCreater",new { id = item.TemplateID}) |
+                @Html.ActionLink("Subject Question","SubjectQuestionCreater", new { id = item.TemplateID })
+            </td>
+        </tr>
+    }
+
+</table>

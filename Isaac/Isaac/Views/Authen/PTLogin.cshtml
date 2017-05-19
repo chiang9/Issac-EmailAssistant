@@ -1,0 +1,119 @@
+﻿@model  Isaac.Models.AspNetUser
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+}
+
+<h2>Login</h2>
+@using (Html.BeginForm())
+{
+
+    <button id="authorize-button" class="btn btn-primary hidden">Login</button>
+    <div>
+        <fieldset>
+            <legend>Login Form</legend>
+            <div>
+                <label>Account</label>
+            </div>
+            <div>
+                @Html.TextBoxFor(u => u.UserName, new { @id = "username" })
+            </div>
+            <div>
+                <label>Password</label>
+            </div>
+            <div>
+                @Html.PasswordFor(u => u.PasswordHash)
+            </div>
+            <input type="submit" value="LogIn" />
+
+        </fieldset>
+    </div>
+    <br/>
+}
+<button id="register-btn">Register</button> <br /> <br />
+<button>@Html.ActionLink("Forget Password", "Forgetpassword", "Authen", new { @style = "color:black; margin-top: 30px" })</button>
+<script>
+    var emailId = "";
+    var clientId = '149346526257-mm1str5bj0hemtu6f44itcheia8bdp1n.apps.googleusercontent.com';
+    var apiKey = 'AIzaSyAMvrO8gDr1cMOYhXmsvtwEP4K1ICRzAhU';
+    var scopes =
+      'https://www.googleapis.com/auth/gmail.readonly ' +
+      'https://www.googleapis.com/auth/gmail.send';
+
+
+    function handleClientLoad() {
+        gapi.client.setApiKey(apiKey);
+        window.setTimeout(checkAuth, 1);
+    }
+
+    function checkAuth() {
+        gapi.auth.authorize({
+            client_id: clientId,
+            scope: scopes,
+            immediate: true
+        }, handleAuthResult);
+    }
+
+    function handleAuthClick() {
+        gapi.auth.authorize({
+            client_id: clientId,
+            scope: scopes,
+            immediate: false
+        }, handleAuthResult);
+        return false;
+    }
+
+    function handleAuthResult(authResult) {
+        if (authResult && !authResult.error) {
+            loadGmailApi();
+            $('#authorize-button').remove();
+
+        } else {
+            $('#authorize-button').removeClass("hidden");
+            $('#authorize-button').on('click', function () {
+                handleAuthClick();
+            });
+        }
+    }
+
+    function loadGmailApi() {
+        gapi.client.load('gmail', 'v1', loadApi);
+
+    }
+
+    var info = "";
+
+
+    function loadApi() {
+        var trequest = gapi.client.gmail.users.getProfile({ 'userId': 'me' });
+        trequest.execute(function (res) {
+            emailId = res.emailAddress;
+            var i = 0;
+            for (i; i < emailId.length; i++) {
+                if (emailId.substring(i, i+5) == "gmail") {
+                    info = emailId.substring(0, i-1);
+                }
+            }
+            while (info.includes(".")) {
+                info = info.replace(".", "%%");
+            }
+
+            document.getElementById('username').value = emailId;
+        });
+
+
+    }
+
+
+    document.getElementById('register-btn').addEventListener('click',function() {
+        if (info == ""){
+            location.replace('../Authen/PTRegister/'+info);
+        }
+        else{
+            location.replace('../Authen/PTRegister/'+info);
+        }
+
+    });
+
+</script>
+<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>

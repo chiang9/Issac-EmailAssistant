@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="affae7f1b4954e24995490de099e627f" Name="Diagram1">
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.AspNetRole" Width="1.5" PointX="0.75" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="10.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="13.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.AspNetUser" Width="1.5" PointX="3" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.sysdiagram" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.UserUseTemplate" Width="1.5" PointX="5.25" PointY="3.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.Author" Width="1.5" PointX="0.75" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.Category" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.Question" Width="1.5" PointX="3" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.questionType" Width="1.5" PointX="0.75" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.SubjectQuestion" Width="1.5" PointX="7.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.subjectTemplateQuestion" Width="1.5" PointX="5.25" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.Template" Width="1.5" PointX="3" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.TemplateQuestion" Width="1.5" PointX="5.25" PointY="0.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="DB_9FE202_isaacModel.vw_TemplateQuestion" Width="1.5" PointX="7.75" PointY="6.75" IsExpanded="true" />
+        <AssociationConnector Association="DB_9FE202_isaacModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_9FE202_isaacModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_9FE202_isaacModel.FK__UserUseTe__AspNe__571DF1D5" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_9FE202_isaacModel.FK__UserUseTe__Templ__5629CD9C" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_9FE202_isaacModel.FK__Template__Author__1273C1CD" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_9FE202_isaacModel.FK__Template__Catego__6FE99F9F" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_9FE202_isaacModel.FK__Questions__quest__0C85DE4D" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_9FE202_isaacModel.FK_TempQues_Ques" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_9FE202_isaacModel.FK__subjectTe__Templ__37703C52" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_9FE202_isaacModel.FK_TempQues_Temp" ManuallyRouted="false" />
+        <AssociationConnector Association="DB_9FE202_isaacModel.AspNetUserRoles" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,61 @@
+﻿<link href="~/Content/AppProccessing.css" rel="stylesheet" />
+@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+}
+
+<link href="~/Content/CategoryBrosing.css" rel="stylesheet" />
+<div id="header">
+    Select your Template Category
+</div>
+
+<div ng-controller="CategoryBrowsingController">
+    
+    <div class="form-group">
+        <input class="form-control" ng-model="searchTextCat" placeholder="Search your template">
+    </div>
+    <table class="table table-hover">
+        <tr id="table-header">
+            <td>Title</td>
+            <td>Description</td>
+            <td></td>
+        </tr>
+        <tr ng-repeat="c in Category|filter: searchTextCat">
+            <td>{{c.Title}}</td>
+            <td>{{c.Content}}</td>
+            <td><a href={{c.Link}}><label class="btn btn-success">Select</label></a></td>
+        </tr>
+    </table>
+</div>
+
+<div style="float:right">
+    <br />
+    <button id="back-btn" class="btn btn-default">Back</button>
+
+</div>
+
+
+
+
+<script type="text/javascript">
+    var app = angular.module('IsaacApp', []);
+    app.controller('CategoryBrowsingController', function ($scope, $http) {
+
+        var Title = @Html.Raw(Json.Encode(ViewBag.Title));
+        var ID = @Html.Raw(Json.Encode(ViewBag.ID));
+        var Description = @Html.Raw(Json.Encode(ViewBag.Description));
+
+        $scope.Category = [];
+
+        for (var i = 0; i< Title.length; i++){
+            $scope.Category.push({Title:Title[i],Content:Description[i],Link:"http://issacemail.com/appconnection/TemplateBrowsing/"+ID[i]})
+        }
+
+        
+    });
+
+    document.getElementById('back-btn').addEventListener('click', function() {
+        location.replace("http://issacemail.com/AppConnection/Compose");
+        
+    });
+
+</script>

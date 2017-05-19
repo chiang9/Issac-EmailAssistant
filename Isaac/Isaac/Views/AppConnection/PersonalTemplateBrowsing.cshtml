@@ -1,0 +1,70 @@
+﻿@{
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+}
+@model IEnumerable<Isaac.Models.PersonalTemplate>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+<link href="~/Content/templateBrowsing.css" rel="stylesheet" />
+
+<div id="header">
+    Select  your  Template
+</div>
+
+
+<div ng-controller="TemplateBrowsingController">
+    <div class="form-group">
+        <input class="form-control" ng-model="searchText" placeholder="Search your template">
+    </div>
+    <table class="table table-hover">
+        <tr id="table-header">
+            <td>Title</td>
+            <td>Description</td>
+            <td>Content</td>
+            <td>Subject</td>
+            <td></td>
+        </tr>
+        <tr ng-repeat="t in Template|filter: searchText">
+            <td>{{t.Title}}</td>
+            <td>{{t.Content}}</td>
+            <td>{{t.Context}}</td>
+            <td>{{t.Subject}}</td>
+            <td><a href={{t.Link}}><label class="btn btn-success">Select</label></a></td>
+        </tr>
+    </table>
+</div>
+
+<div style="float:right">
+    <br />
+    <button id="back-btn" class="btn btn-default">Back</button>
+ <button>@Html.ActionLink("Create Template", "AppPersonalTemplateCreate","TemplateMaker", new { id = ViewBag.UserID }, new { @Style="color: black" })</button>   
+</div>
+
+
+
+<script>
+    var app = angular.module('IsaacApp', []);
+    app.controller('TemplateBrowsingController', function ($scope, $http) {
+
+        var Title = @Html.Raw(Json.Encode(ViewBag.Title));
+        var Content = @Html.Raw(Json.Encode(ViewBag.Content));
+        var Context = @Html.Raw(Json.Encode(ViewBag.Context));
+        var ID = @Html.Raw(Json.Encode(ViewBag.ID));
+        var Subject = @Html.Raw(Json.Encode(ViewBag.Subject));
+
+        $scope.Template = [];
+
+        for (var i = 0; i< Title.length; i++){
+            $scope.Template.push({Title:Title[i],Content:Content[i],Context:Context[i],Subject:Subject[i],Link:"http://issacemail.com/AppConnection/PersonalCustomDialog/"+ID[i]})
+        }
+
+
+    });
+
+
+    document.getElementById('back-btn').addEventListener('click', function() {
+        location.replace("http://issacemail.com/AppConnection/Compose");
+        
+    });
+</script>

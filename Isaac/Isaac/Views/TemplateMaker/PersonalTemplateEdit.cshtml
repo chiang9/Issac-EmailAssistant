@@ -1,0 +1,109 @@
+﻿@model Isaac.Models.PersonalTemplate
+
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_AppLayout.cshtml";
+}
+
+<h2>Create</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Personal Template</h4>
+        <hr />
+
+        <div class="form-group" style="display:none">
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PTemplateID, new { htmlAttributes = new { @class = "form-control", @Value = ViewBag.TemplateId } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TemplateTitle, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.TemplateTitle, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.TemplateTitle, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Context, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(m => m.Context, 15, 20, new RouteValueDictionary(new { @class = "form-control", id = "Textarea" }))
+                <button type="button" ng-click="QuestionButton()" id="question">Question</button>
+
+                @Html.ValidationMessageFor(model => model.Context, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.TemplateDescription, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextAreaFor(m => m.TemplateDescription, 15, 20, new RouteValueDictionary(new { @class = "form-control", id = "Textarea" }))
+                @Html.ValidationMessageFor(model => model.TemplateDescription, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group" style="display:none">
+            @Html.LabelFor(model => model.UserID, "UserID", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.UserID, new { htmlAttributes = new { @class = "form-control", @Value = ViewBag.UserId } })
+                @Html.ValidationMessageFor(model => model.UserID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.SubjectContent, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.SubjectContent, new { htmlAttributes = new { @class = "form-control", id = "subjectquestion" } })
+                @Html.ValidationMessageFor(model => model.SubjectContent, "", new { @class = "text-danger" })
+                <button type="button" ng-click="QuestionButton()" id="question2">Question</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Apply" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    <br />
+    <button id="back-btn" class="btn btn-default">Back</button>
+
+</div>
+
+<script type="text/javascript">
+    const questionInsert = ' [question] ';
+
+    function typeInTextarea(el, newText) {
+        var start = el.prop("selectionStart")
+        var end = el.prop("selectionEnd")
+        var text = el.val()
+        var before = text.substring(0, start)
+        var after = text.substring(end, text.length)
+        el.val(before + newText + after)
+        el[0].selectionStart = el[0].selectionEnd = start + newText.length
+        el.focus()
+    }
+
+    $('#question').on('click', function () {
+        typeInTextarea($("#Textarea"), questionInsert);
+    });
+
+    $('#question2').on('click', function () {
+        typeInTextarea($("#subjectquestion"), questionInsert);
+    });
+
+    document.getElementById('back-btn').addEventListener('click', function () {
+        window.history.back();
+
+    });
+
+</script>
